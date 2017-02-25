@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="10dp"
+    android:weightSum="1">
+
+    <Button
+        android:text="Add New Bill"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/add_bill_button"
+        android:elevation="0dp"
+        android:textColor="@android:color/background_light"
+        android:layout_gravity="center"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:textSize="18sp"
+        android:background="@color/blue_light"
+        android:onClick="onAddBillClick" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp">
+
+        <TextView
+            android:text="View my bills from the last"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView2"
+            android:layout_weight="0.21"
+            android:textSize="18sp" />
+
+        <Spinner
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/spinner_dates" />
+
+        <TextView
+            android:text="months:"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView3"
+            android:layout_weight="1"
+            android:textSize="18sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:layout_below="@+id/ListView" >
+
+        <CheckBox
+            android:text="Unpaid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/filter_unpaid"
+            android:layout_weight="1"
+            android:textColor="@color/red_dark"
+            android:textSize="18sp"
+            android:onClick="onFilterClick"
+            android:checked="true" />
+
+        <CheckBox
+            android:text="Paid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/filter_paid"
+            android:layout_weight="1"
+            android:textColor="@color/green_dark"
+            android:textSize="18sp"
+            android:onClick="onFilterClick"
+            android:checked="true" />
+
+        <CheckBox
+            android:text="Due Soon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/filter_due_soon"
+            android:layout_weight="1"
+            android:textSize="18sp"
+            android:textColor="@color/yellow_dark"
+            android:onClick="onFilterClick"
+            android:checked="true" />
+
+    </LinearLayout>
+
+    <ListView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:id="@+id/listView"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:choiceMode="singleChoice"
+        android:layout_above="@+id/add"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <!--<LinearLayout-->
+    <!--android:orientation="vertical"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent">-->
+
+    <!--<LinearLayout-->
+    <!--android:orientation="horizontal"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content">-->
+
+    <!--<LinearLayout-->
+    <!--android:orientation="vertical"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:layout_weight="1">-->
+
+    <!--<TextView-->
+    <!--android:text="Verizon - Cable"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:id="@+id/textView9"-->
+    <!--android:layout_weight="1"-->
+    <!--android:textSize="18sp"-->
+    <!--android:background="@color/red_light"-->
+    <!--android:textColor="?android:attr/colorForeground"-->
+    <!--android:paddingLeft="10dp" />-->
+
+    <!--<TextView-->
+    <!--android:text="$70 due on 02/17/2017"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:id="@+id/textView10"-->
+    <!--android:layout_weight="1"-->
+    <!--android:textSize="18sp"-->
+    <!--android:background="@color/red_light"-->
+    <!--android:textColor="@android:color/black"-->
+    <!--android:paddingLeft="10dp" />-->
+    <!--</LinearLayout>-->
+
+    <!--<Button-->
+    <!--android:text="Edit"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:id="@+id/button3"-->
+    <!--android:background="@color/red_light"-->
+    <!--android:textSize="18sp" />-->
+    <!--</LinearLayout>-->
+
+    <!--</LinearLayout>-->
+
+</LinearLayout>

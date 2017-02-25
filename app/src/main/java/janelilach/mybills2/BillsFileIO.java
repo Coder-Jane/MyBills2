@@ -2,6 +2,8 @@ package janelilach.mybills2;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
+
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -20,6 +22,8 @@ public class BillsFileIO {
         }
 
         SharedPreferences prefs = context.getSharedPreferences("billsData", Context.MODE_PRIVATE);
+//        context.getSharedPreferences("billsData", 0).edit().clear().commit(); // for deleting shared prefs, if necessary dev-side
+//        Log.v("BillIO", "removed shared prefs cache");
 
         try {
             currentBills = (ArrayList<Bill>) ObjectSerializer.deserialize(prefs.getString("BILLS", ObjectSerializer.serialize(new ArrayList<Bill>())));
