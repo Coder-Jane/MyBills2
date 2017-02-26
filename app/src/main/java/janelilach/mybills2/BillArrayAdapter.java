@@ -12,52 +12,56 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.StringTokenizer;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by User on 2/19/2017.
  */
 
-public class BillArrayAdapter extends BaseAdapter implements ListAdapter {
-    private ArrayList<Bill> list;
+/**
+ * Filtering setup code borrowed from https://gist.github.com/fjfish/3024308
+ */
+
+public class BillArrayAdapter extends BaseAdapter implements Filterable {
+    private ArrayList<Bill> listOriginal = null;
+    private ArrayList<Bill> listFiltered = null;
     private Context context;
     private Activity activity;
+    private BillFilter filter;
 
     public BillArrayAdapter(ArrayList<Bill> list, Context context, Activity activity) {
-        this.list = list;
+        this.listOriginal = list;
+        this.listFiltered = list;
         this.context = context;
         this.activity = activity;
+        filter = new BillFilter();
     }
 
-
-    @Override
     public int getCount() {
-        return list.size();
+        return listFiltered.size();
     }
 
-    @Override
     public Object getItem(int pos) {
-        return list.get(pos);
+        return listFiltered.get(pos);
     }
 
-    @Override
     public long getItemId(int pos) {
-        return 0;
+        return pos;
     }
 
-    @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         Bill thisBill;
         int bgColor = 0;
         View view = convertView;
-        CheckBox unpaid = (CheckBox) convertView.findViewById(R.id.filter_unpaid);
-        CheckBox paid = (CheckBox) convertView.findViewById(R.id.filter_paid);
-        CheckBox dueSoon = (CheckBox) convertView.findViewById(R.id.filter_due_soon);
 
         if (view == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -65,12 +69,12 @@ public class BillArrayAdapter extends BaseAdapter implements ListAdapter {
         }
 
         // set empty view if null
-        if (list.isEmpty()) {
+        if (listFiltered.isEmpty()) {
             Log.v("emptyList", "list is empty");
             return view;
         }
 
-        thisBill = list.get(position);
+        thisBill = listFiltered.get(position);
 
         //Handle TextView and display string from your list
         TextView listItemText = (TextView) view.findViewById(R.id.bill_elem_content);
@@ -91,8 +95,6 @@ public class BillArrayAdapter extends BaseAdapter implements ListAdapter {
 
         //Handle buttons and edit onClickListeners
 //        Button deleteBtn = (Button)view.findViewById(R.id.delete_btn);
-        Button editBtn = (Button) view.findViewById(R.id.bill_elem_edit);
-
 //        deleteBtn.setOnClickListener(new View.OnClickListener(){
 //            @Override
 //            public void onClick(View v) {
@@ -101,12 +103,14 @@ public class BillArrayAdapter extends BaseAdapter implements ListAdapter {
 //                notifyDataSetChanged();
 //            }
 //        });
+
+        Button editBtn = (Button) view.findViewById(R.id.bill_elem_edit);
         editBtn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
                 // send bill data back
                 Intent i = new Intent(v.getContext(), AddBillActivity.class);
-                Bill thisBill = list.get(position);
+                Bill thisBill = listFiltered.get(position);
                 Bundle b = new Bundle();
                 b.putSerializable("bill", thisBill);
                 i.putExtra("bill", b);
@@ -116,6 +120,92 @@ public class BillArrayAdapter extends BaseAdapter implements ListAdapter {
         });
 
         return view;
+    }
+
+
+    public Filter getFilter(){
+        return filter;
+    }
+
+    private class BillFilter extends Filter {
+
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+
+            FilterResults results = new FilterResults();
+            final ArrayList<Bill> list = listOriginal;
+            int count = list.size();
+
+            final ArrayList<Bill> nlist = new ArrayList<Bill>(count);
+
+            // check if sent spinner or checkbox value
+            boolean isSpinner = false;
+            String constraintString = constraint.toString();
+            if (constraintString.indexOf(',') ==  -1) {
+                isSpinner = true;
+            }
+
+            boolean[] isChecked = new boolean[3];
+            if (!isSpinner) {
+                StringTokenizer tokenizer = new StringTokenizer(constraint.toString());
+                int iter = 0;
+                while (tokenizer.hasMoreTokens()) {
+                    isChecked[iter] = Integer.parseInt(tokenizer.nextToken(",")) == 1 ? true : false;
+                    iter++;
+                }
+            }
+
+            Bill currentBill;
+            for (int i = 0; i < count; i++) {
+                currentBill = list.get(i);
+
+                // quick and dirty way to render add/remove instantly
+                if (constraintString.equals("add") || constraintString.equals("remove")) {
+                    nlist.add(currentBill);
+                }
+                // filter bill dates
+                else if (isSpinner) {
+                    if (constraintString.equals("All")) {
+                        nlist.add(currentBill);
+                    } else {
+                        Date today = new Date();
+                        long temp = today.getTime() - currentBill.dueDate.getTime();
+                        long diff = TimeUnit.DAYS.convert(temp, TimeUnit.MILLISECONDS);
+                        long limit = Integer.parseInt(constraintString);
+                        if (diff <= limit) {
+                            nlist.add(currentBill);
+                        }
+                    }
+                }
+
+                // filter bill statuses
+                else {
+                    if (currentBill.color.equals("red")) {
+                        if (isChecked[0]) nlist.add(currentBill);
+                    }
+                    else if (currentBill.color.equals("green")) {
+                        if (isChecked[1]) nlist.add(currentBill);
+                    }
+                    else if (currentBill.color.equals("yellow")) {
+                        if (isChecked[2]) nlist.add(currentBill);
+                    }
+                }
+
+            }
+
+            // do sorting by color & date
+            Collections.sort(nlist, Collections.reverseOrder(new BillComparator()));
+
+            results.values = nlist;
+            results.count = nlist.size();
+            return results;
+        }
+
+        @Override
+        protected void publishResults(CharSequence constrain, FilterResults results) {
+            listFiltered = (ArrayList<Bill>) results.values;
+            notifyDataSetChanged();
+        }
     }
 
 }

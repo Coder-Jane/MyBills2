@@ -10,7 +10,6 @@ import android.widget.RadioButton;
 import android.widget.Spinner;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 
 public class AddBillActivity extends AppCompatActivity {
@@ -47,10 +46,7 @@ public class AddBillActivity extends AppCompatActivity {
 
         try {
             dueDate = df.parse(date);
-//            Calendar cal = Calendar.getInstance();
-//            cal.setTime(dueDate);
             Log.v("due date cal", dueDate.toString());
-//            cal.get(Calendar.DAY_OF_MONTH);
 
             // may need to fix the logic of setting paid dates here
             if (paid) {
@@ -58,14 +54,9 @@ public class AddBillActivity extends AppCompatActivity {
                 Log.v("bill color",color);
                 paidDate = new Date();
                 if (paidDate.after(dueDate)) { // case 1: editing bill status to paid
-//                    String todayString = today.toString();
-//                    SimpleDateFormat fromStandard = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy");
 
                     String paidDateString = df.format(today);
                     paidDate = df.parse(paidDateString);
-//                    Calendar cal2 = Calendar.getInstance();
-//                    cal2.setTime(paidDate);
-//                    cal2.get(Calendar.DAY_OF_MONTH);
                 } else { // case 2: adding new bill that was paid (assume paid same date)
                     paidDate = dueDate;
                 }
