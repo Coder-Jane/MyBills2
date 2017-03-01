@@ -17,7 +17,7 @@ public class BillsFileIO {
 
     public BillsFileIO(Context context){
         this.context = context;
-        if (null == currentBills) {
+        if (currentBills == null) {
             currentBills = new ArrayList<Bill>();
         }
 
@@ -55,12 +55,8 @@ public class BillsFileIO {
         return currentBills;
     }
 
-    public ArrayList<Bill> deleteBill(String name) {
-        for(int i = 0; i < currentBills.size(); i++) {
-            if(currentBills.get(i).name.equals(name)) {
-                currentBills.remove(i);
-            }
-        }
+    public ArrayList<Bill> deleteBill(Bill b) {
+        currentBills.remove(b);
 
         SharedPreferences prefs = context.getSharedPreferences("billsData", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();

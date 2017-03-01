@@ -76,7 +76,7 @@
             android:inputType="date"
             android:ems="10"
             android:id="@+id/add_bill_date"
-            android:hint="00-00-0000"
+            android:hint="MM-dd-YYYY"
             android:background="@android:drawable/editbox_dropdown_light_frame"
             android:textSize="24sp" />
 

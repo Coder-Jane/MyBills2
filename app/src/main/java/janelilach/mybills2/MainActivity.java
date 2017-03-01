@@ -21,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<Bill> bills;
 
     private ListView listView;
-    public BillArrayAdapter billAA;
+    private BillArrayAdapter billAA;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +55,33 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
 
+            }
+        });
+
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                long viewId = view.getId();
+
+                Bill thisBill = (Bill) listView.getItemAtPosition(position);
+                Bundle b = new Bundle();
+                b.putSerializable("bill", thisBill);
+
+                if (viewId == R.id.bill_elem_edit) {
+                    Log.v("EditBill",thisBill.toString());
+                    // send bill data back
+                    Intent i = new Intent(view.getContext(), AddBillActivity.class);
+                    i.putExtra("bill", b);
+                    startActivityForResult(i, 1);
+
+                } else if (viewId == R.id.bill_elem_delete) {
+                    Log.v("DeleteBill",thisBill.toString());
+                }
+                // need to remove old bill in either case
+                bills = billsIO.deleteBill(thisBill);
+                billAA.getFilter().filter("refresh");
             }
         });
     }
@@ -97,12 +124,18 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1) {
             if (resultCode == RESULT_OK){
+//                boolean isEdit = data.getBooleanExtra("isEdit", false);
+//                Log.v("result of action", String.valueOf(isEdit));
+//                if (isEdit) {
+//
+//                }
                 Bundle b = data.getBundleExtra("bill");
                 Bill newBill = (Bill) b.getSerializable("bill");
                 bills = billsIO.addBill(newBill);
-                billAA.getFilter().filter("add");
+                billAA.getFilter().filter("refresh");
             }
         }
     }
+
 
 }

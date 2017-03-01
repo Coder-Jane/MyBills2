@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:id="@+id/bill_elem_wrapper" >
 
     <RelativeLayout
         android:orientation="horizontal"
@@ -9,34 +10,55 @@
         android:layout_height="wrap_content" >
 
         <LinearLayout
-            android:orientation="vertical"
+            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_alignParentLeft="true"
-            android:layout_weight="1"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="4dp">
+            android:layout_height="match_parent">
 
-            <TextView
+            <LinearLayout
+                android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/bill_elem_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentLeft="true"
                 android:layout_weight="1"
-                android:textSize="18sp"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="4dp">
 
-                android:textColor="?android:attr/colorForeground"
-                android:paddingLeft="10dp" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/bill_elem_content"
+                    android:layout_weight="1"
+                    android:textSize="18sp"
+
+                    android:textColor="?android:attr/colorForeground"
+                    android:paddingLeft="10dp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent">
+
+                <Button
+                    android:text="Edit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:id="@+id/bill_elem_edit"
+
+                    android:textSize="18sp"
+                    android:layout_marginTop="4dp" />
+
+                <Button
+                    android:text="Delete"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/bill_elem_delete" />
+
+            </LinearLayout>
+
         </LinearLayout>
-
-        <Button
-            android:text="Edit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:id="@+id/bill_elem_edit"
-
-            android:textSize="18sp"
-            android:layout_marginTop="4dp" />
 
     </RelativeLayout>
 </LinearLayout>

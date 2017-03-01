@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -34,16 +35,24 @@ import java.util.concurrent.TimeUnit;
 public class BillArrayAdapter extends BaseAdapter implements Filterable {
     private ArrayList<Bill> listOriginal = null;
     private ArrayList<Bill> listFiltered = null;
+
     private Context context;
     private Activity activity;
     private BillFilter filter;
 
+    private boolean[] currChecked;
+    private String currSpinner;
+
     public BillArrayAdapter(ArrayList<Bill> list, Context context, Activity activity) {
         this.listOriginal = list;
         this.listFiltered = list;
+
         this.context = context;
         this.activity = activity;
         filter = new BillFilter();
+
+        currChecked = new boolean[]{true, true, true};
+        currSpinner = "All";
     }
 
     public int getCount() {
@@ -59,7 +68,7 @@ public class BillArrayAdapter extends BaseAdapter implements Filterable {
     }
 
     public View getView(final int position, View convertView, ViewGroup parent) {
-        Bill thisBill;
+        final Bill thisBill;
         int bgColor = 0;
         View view = convertView;
 
@@ -77,7 +86,7 @@ public class BillArrayAdapter extends BaseAdapter implements Filterable {
         thisBill = listFiltered.get(position);
 
         //Handle TextView and display string from your list
-        TextView listItemText = (TextView) view.findViewById(R.id.bill_elem_content);
+        final TextView listItemText = (TextView) view.findViewById(R.id.bill_elem_content);
         listItemText.setText(thisBill.toString());
 
         // Set bill color
@@ -90,36 +99,37 @@ public class BillArrayAdapter extends BaseAdapter implements Filterable {
         }
         LinearLayout parentView = (LinearLayout)listItemText.getParent();
         Button editButton = (Button) view.findViewById(R.id.bill_elem_edit);
+        Button deleteButton = (Button) view.findViewById(R.id.bill_elem_delete);
+
         parentView.setBackgroundColor(bgColor);
         editButton.setBackgroundColor(bgColor);
+        deleteButton.setBackgroundColor(bgColor);
 
-        //Handle buttons and edit onClickListeners
-//        Button deleteBtn = (Button)view.findViewById(R.id.delete_btn);
-//        deleteBtn.setOnClickListener(new View.OnClickListener(){
-//            @Override
-//            public void onClick(View v) {
-//                //do something
-//                list.remove(position); //or some other task
-//                notifyDataSetChanged();
-//            }
-//        });
+        LinearLayout wrapper = (LinearLayout) view.findViewById(R.id.bill_elem_wrapper);
+        editButton.setTag(wrapper);
+        deleteButton.setTag(wrapper);
 
-        Button editBtn = (Button) view.findViewById(R.id.bill_elem_edit);
-        editBtn.setOnClickListener(new View.OnClickListener(){
+
+        editButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                // send bill data back
-                Intent i = new Intent(v.getContext(), AddBillActivity.class);
-                Bill thisBill = listFiltered.get(position);
-                Bundle b = new Bundle();
-                b.putSerializable("bill", thisBill);
-                i.putExtra("bill", b);
-                activity.startActivityForResult(i, 1);
-                notifyDataSetChanged();
+                LinearLayout parent = (LinearLayout) v.getTag();
+                ListView clickParent = (ListView) parent.getParent();
+                clickParent.performItemClick(v, position, 0); // Let the event be handled in onItemClick()
             }
         });
 
-        return view;
+        deleteButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+
+                LinearLayout parent = (LinearLayout) v.getTag();
+                ListView clickParent = (ListView) parent.getParent();
+                clickParent.performItemClick(v, position, 0); // Let the event be handled in onItemClick()
+            }
+        });
+
+            return view;
     }
 
 
@@ -136,22 +146,26 @@ public class BillArrayAdapter extends BaseAdapter implements Filterable {
             final ArrayList<Bill> list = listOriginal;
             int count = list.size();
 
+            Log.v("originalListSize", Integer.toString(count));
             final ArrayList<Bill> nlist = new ArrayList<Bill>(count);
 
-            // check if sent spinner or checkbox value
+            // check if sent refresh, or spinner/checkbox value
             boolean isSpinner = false;
             String constraintString = constraint.toString();
-            if (constraintString.indexOf(',') ==  -1) {
-                isSpinner = true;
-            }
+            if (!constraintString.equals("refresh")) {
+                if (constraintString.indexOf(',') ==  -1) {
+                    isSpinner = true;
+                    currSpinner = constraintString; // copy result to carry over to subsequent filtering
+                }
 
-            boolean[] isChecked = new boolean[3];
-            if (!isSpinner) {
-                StringTokenizer tokenizer = new StringTokenizer(constraint.toString());
-                int iter = 0;
-                while (tokenizer.hasMoreTokens()) {
-                    isChecked[iter] = Integer.parseInt(tokenizer.nextToken(",")) == 1 ? true : false;
-                    iter++;
+                if (!isSpinner) {
+                    StringTokenizer tokenizer = new StringTokenizer(constraint.toString());
+                    int iter = 0;
+                    currChecked  = new boolean[3]; // copy results to carry over to subsequent filtering
+                    while (tokenizer.hasMoreTokens()) {
+                        currChecked[iter] = Integer.parseInt(tokenizer.nextToken(",")) == 1 ? true : false;
+                        iter++;
+                    }
                 }
             }
 
@@ -159,19 +173,16 @@ public class BillArrayAdapter extends BaseAdapter implements Filterable {
             for (int i = 0; i < count; i++) {
                 currentBill = list.get(i);
 
-                // quick and dirty way to render add/remove instantly
-                if (constraintString.equals("add") || constraintString.equals("remove")) {
-                    nlist.add(currentBill);
-                }
                 // filter bill dates
-                else if (isSpinner) {
-                    if (constraintString.equals("All")) {
+                if (isSpinner || constraintString.equals("refresh")) {
+
+                    if (currSpinner.equals("All")) {
                         nlist.add(currentBill);
                     } else {
                         Date today = new Date();
                         long temp = today.getTime() - currentBill.dueDate.getTime();
                         long diff = TimeUnit.DAYS.convert(temp, TimeUnit.MILLISECONDS);
-                        long limit = Integer.parseInt(constraintString);
+                        long limit = Integer.parseInt(currSpinner);
                         if (diff <= limit) {
                             nlist.add(currentBill);
                         }
@@ -179,15 +190,15 @@ public class BillArrayAdapter extends BaseAdapter implements Filterable {
                 }
 
                 // filter bill statuses
-                else {
+                if ((!isSpinner || constraintString.equals("refresh")) && !nlist.contains(currentBill)) {
                     if (currentBill.color.equals("red")) {
-                        if (isChecked[0]) nlist.add(currentBill);
+                        if (currChecked[0]) nlist.add(currentBill);
                     }
                     else if (currentBill.color.equals("green")) {
-                        if (isChecked[1]) nlist.add(currentBill);
+                        if (currChecked[1]) nlist.add(currentBill);
                     }
                     else if (currentBill.color.equals("yellow")) {
-                        if (isChecked[2]) nlist.add(currentBill);
+                        if (currChecked[2]) nlist.add(currentBill);
                     }
                 }
 
@@ -202,7 +213,7 @@ public class BillArrayAdapter extends BaseAdapter implements Filterable {
         }
 
         @Override
-        protected void publishResults(CharSequence constrain, FilterResults results) {
+        protected void publishResults(CharSequence constraint, FilterResults results) {
             listFiltered = (ArrayList<Bill>) results.values;
             notifyDataSetChanged();
         }

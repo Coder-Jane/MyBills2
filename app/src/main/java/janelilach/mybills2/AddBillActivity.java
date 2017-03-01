@@ -5,6 +5,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Spinner;
@@ -22,12 +24,44 @@ public class AddBillActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_bill);
+
+        Intent i = getIntent();
+        Bundle receivedB = i.getBundleExtra("bill");
+        if (receivedB != null) {
+            Bill oldBill = (Bill) receivedB.getSerializable("bill");
+
+            ((EditText) findViewById(R.id.add_bill_name)).setText(oldBill.name);
+            ((EditText) findViewById(R.id.add_bill_amount)).setText(Double.toString(oldBill.amount));
+            Spinner spinner = (Spinner) findViewById(R.id.spinner_types);
+            ArrayAdapter adapter = (ArrayAdapter) spinner.getAdapter();
+            spinner.setSelection(adapter.getPosition(oldBill.type));
+
+            SimpleDateFormat df = new SimpleDateFormat("MM-dd-yyyy");
+            ((EditText) findViewById(R.id.add_bill_date)).setText(df.format((oldBill.dueDate)));
+
+            if (oldBill.paidDate != null) {
+                ((RadioButton) findViewById(R.id.add_bill_status_paid)).setChecked(true);
+            } else {
+                ((RadioButton) findViewById(R.id.add_bill_status_unpaid)).setChecked(true);
+            }
+
+            if (oldBill.recurring) {
+                ((RadioButton) findViewById(R.id.add_bill_freq_monthly)).setChecked(true);
+            } else {
+                ((RadioButton) findViewById(R.id.add_bill_freq_once)).setChecked(true);
+            }
+        }
+
+
     }
 
     public void onAddBillConfirmClick(View view) {
-        Log.v("addBill", "entered add bill confirm click");
+
         String color;
         Date dueDate;
+
+        SimpleDateFormat df = new SimpleDateFormat("MM-dd-yyyy");
+
 
         String name = ((EditText) findViewById(R.id.add_bill_name)).getText().toString();
 
@@ -41,8 +75,7 @@ public class AddBillActivity extends AppCompatActivity {
         Date today = new Date();
 
         String date = ((EditText) findViewById(R.id.add_bill_date)).getText().toString();
-        Log.v("date",date);
-        SimpleDateFormat df = new SimpleDateFormat("MM-dd-yyyy");
+        Log.v("date", date);
 
         try {
             dueDate = df.parse(date);
@@ -51,7 +84,7 @@ public class AddBillActivity extends AppCompatActivity {
             // may need to fix the logic of setting paid dates here
             if (paid) {
                 color = "green";
-                Log.v("bill color",color);
+//                Log.v("bill color",color);
                 paidDate = new Date();
                 if (paidDate.after(dueDate)) { // case 1: editing bill status to paid
 
@@ -68,17 +101,21 @@ public class AddBillActivity extends AppCompatActivity {
                 }
             }
 
-            Log.v("bill color 2",color);
+//            Log.v("bill color 2",color);
 
             Intent intent = new Intent();
             Bundle b = new Bundle();
             b.putSerializable("bill", new Bill(name, amount, dueDate, paidDate, type, recurring, color));
             intent.putExtra("bill", b);
+
+//            if (oldBill != null) {
+//                intent.putExtra("isEdit", true);
+//            }
             setResult(RESULT_OK, intent);
             finish();
         } catch (java.text.ParseException e) {
             String stackTrace = e.getStackTrace().toString();
-            Log.v("Date creation error", e.toString());
+            Log.v("Date creation error", stackTrace);
         }
 
     }
@@ -93,9 +130,9 @@ public class AddBillActivity extends AppCompatActivity {
         boolean checked = ((RadioButton) view).isChecked();
 
         // Check which radio button was clicked
-        switch(view.getId()) {
+        switch (view.getId()) {
             case R.id.add_bill_status_paid:
-                if (checked)  paid = true;
+                if (checked) paid = true;
                 break;
             case R.id.add_bill_status_unpaid:
                 if (checked) paid = false;
