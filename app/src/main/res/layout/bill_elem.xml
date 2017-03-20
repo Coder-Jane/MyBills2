@@ -47,14 +47,14 @@
                     android:layout_alignParentRight="true"
                     android:id="@+id/bill_elem_edit"
 
-                    android:textSize="18sp"
                     android:layout_marginTop="4dp" />
 
                 <Button
                     android:text="Delete"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/bill_elem_delete" />
+                    android:id="@+id/bill_elem_delete"
+                    android:layout_marginBottom="4dp" />
 
             </LinearLayout>
 

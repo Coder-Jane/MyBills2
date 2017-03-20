@@ -6,17 +6,17 @@
     android:weightSum="1">
 
     <Button
-        android:text="Add New Bill"
+        android:text="+ Add New Bill"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/add_bill_button"
         android:elevation="0dp"
-        android:textColor="@android:color/background_light"
+        android:textColor="#355797"
         android:layout_gravity="center"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
         android:textSize="18sp"
-        android:background="@color/blue_light"
+        android:background="@drawable/blue_button"
         android:onClick="onAddBillClick" />
 
     <LinearLayout

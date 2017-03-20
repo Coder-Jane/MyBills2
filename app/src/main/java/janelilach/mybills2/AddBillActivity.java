@@ -12,6 +12,7 @@ import android.widget.RadioButton;
 import android.widget.Spinner;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class AddBillActivity extends AppCompatActivity {
@@ -25,6 +26,24 @@ public class AddBillActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_bill);
 
+        ArrayList<String> arrayList1 = new ArrayList<String>();
+        arrayList1.add("Cable");
+        arrayList1.add("Credit");
+        arrayList1.add("Electricity");
+        arrayList1.add("Gas");
+        arrayList1.add("Heating");
+        arrayList1.add("Internet");
+        arrayList1.add("Water");
+        arrayList1.add("Other");
+
+        Spinner spinner = (Spinner) findViewById(R.id.spinner_types);
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String> (this,R.layout.spinner_item_type,arrayList1);
+        adapter.setDropDownViewResource(R.layout.spinner_dropdown);
+        adapter.notifyDataSetChanged();
+        spinner.setAdapter(adapter);
+        spinner.setVisibility(View.VISIBLE);
+
         Intent i = getIntent();
         Bundle receivedB = i.getBundleExtra("bill");
         if (receivedB != null) {
@@ -32,8 +51,10 @@ public class AddBillActivity extends AppCompatActivity {
 
             ((EditText) findViewById(R.id.add_bill_name)).setText(oldBill.name);
             ((EditText) findViewById(R.id.add_bill_amount)).setText(Double.toString(oldBill.amount));
-            Spinner spinner = (Spinner) findViewById(R.id.spinner_types);
-            ArrayAdapter adapter = (ArrayAdapter) spinner.getAdapter();
+
+            adapter.setDropDownViewResource(R.layout.spinner_dropdown);
+
+            //ArrayAdapter adapter = (ArrayAdapter) spinner.getAdapter();
             spinner.setSelection(adapter.getPosition(oldBill.type));
 
             SimpleDateFormat df = new SimpleDateFormat("MM-dd-yyyy");
@@ -43,12 +64,6 @@ public class AddBillActivity extends AppCompatActivity {
                 ((RadioButton) findViewById(R.id.add_bill_status_paid)).setChecked(true);
             } else {
                 ((RadioButton) findViewById(R.id.add_bill_status_unpaid)).setChecked(true);
-            }
-
-            if (oldBill.recurring) {
-                ((RadioButton) findViewById(R.id.add_bill_freq_monthly)).setChecked(true);
-            } else {
-                ((RadioButton) findViewById(R.id.add_bill_freq_once)).setChecked(true);
             }
         }
 
@@ -136,12 +151,6 @@ public class AddBillActivity extends AppCompatActivity {
                 break;
             case R.id.add_bill_status_unpaid:
                 if (checked) paid = false;
-                break;
-            case R.id.add_bill_freq_once:
-                if (checked) recurring = false;
-                break;
-            case R.id.add_bill_freq_monthly:
-                if (checked) recurring = true;
                 break;
         }
     }
