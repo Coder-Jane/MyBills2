@@ -49,6 +49,6 @@ public class Bill implements Serializable {
         String month = String.format("%02d", monthInt);
         Log.v("billMonth", month);
         String year = Integer.toString(cal.get(Calendar.YEAR));
-        return this.name + " - " + this.type + "\n$" + this.amount + " due on " + month + "/" + day + "/" + year + "\n" + paidDate+ "\n";
+        return this.name + " - " + this.type + "\n$" + this.amount + " due on " + month + "/" + day + "/" + year + "\n";
     }
 }

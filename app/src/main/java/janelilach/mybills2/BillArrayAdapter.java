@@ -2,11 +2,14 @@ package janelilach.mybills2;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -108,6 +111,7 @@ public class BillArrayAdapter extends BaseAdapter implements Filterable {
         Button editButton = (Button) view.findViewById(R.id.bill_elem_edit);
         Button deleteButton = (Button) view.findViewById(R.id.bill_elem_delete);
 
+
         parentView.setBackgroundColor(bgColor);
         editButton.setBackgroundColor(bgColor);
         deleteButton.setBackgroundColor(bgColor);
@@ -131,8 +135,35 @@ public class BillArrayAdapter extends BaseAdapter implements Filterable {
             public void onClick(View v) {
 
                 LinearLayout parent = (LinearLayout) v.getTag();
-                ListView clickParent = (ListView) parent.getParent();
-                clickParent.performItemClick(v, position, 0); // Let the event be handled in onItemClick()
+                final ListView clickParent = (ListView) parent.getParent();
+                final View arg = v;
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.CustomDialog);
+                builder.setTitle("Deleting Bill");
+                builder.setMessage("Are you sure you want to delete this bill?");
+                builder.setPositiveButton("Yes, delete this bill", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        clickParent.performItemClick(arg, position, 0); // Let the event be handled in onItemClick()
+                    }
+                });
+                builder.setNegativeButton("Cancel", null);
+
+                AlertDialog alert = builder.create();
+                alert.show();
+
+                Button button0 = alert.getButton(AlertDialog.BUTTON_POSITIVE);
+                button0.setBackground(context.getResources().getDrawable(R.drawable.red_dialog_button));
+                LinearLayout.LayoutParams positiveButtonLL = (LinearLayout.LayoutParams) button0.getLayoutParams();
+                positiveButtonLL.gravity = Gravity.CENTER;
+                positiveButtonLL.bottomMargin = 10;
+                positiveButtonLL.width = 800;
+
+                Button button2 = alert.getButton(AlertDialog.BUTTON_NEGATIVE);
+                button2.setBackground(context.getResources().getDrawable(R.drawable.red_dialog_button));
+                LinearLayout.LayoutParams negativeButtonLL = (LinearLayout.LayoutParams) button2.getLayoutParams();
+                negativeButtonLL.gravity = Gravity.CENTER;
+                negativeButtonLL.bottomMargin = 10;
+                negativeButtonLL.width = 800;
             }
         });
 
