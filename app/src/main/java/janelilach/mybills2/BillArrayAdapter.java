@@ -90,12 +90,19 @@ public class BillArrayAdapter extends BaseAdapter implements Filterable {
         listItemText.setText(thisBill.toString());
 
         // Set bill color
+
         if (thisBill.color.equals("red")) {
             bgColor = ContextCompat.getColor(context, R.color.red_light);
         } else if (thisBill.color.equals("green")) {
             bgColor = ContextCompat.getColor(context, R.color.green_light);
         } else {
-            bgColor = ContextCompat.getColor(context, R.color.yellow_light);
+            Date today = new Date();
+            if (thisBill.dueDate.before(today)) {
+                thisBill.color = "red";
+                bgColor = ContextCompat.getColor(context, R.color.red_light);
+            } else {
+                bgColor = ContextCompat.getColor(context, R.color.yellow_light);
+            }
         }
         LinearLayout parentView = (LinearLayout)listItemText.getParent();
         Button editButton = (Button) view.findViewById(R.id.bill_elem_edit);
@@ -146,7 +153,7 @@ public class BillArrayAdapter extends BaseAdapter implements Filterable {
             final ArrayList<Bill> list = listOriginal;
             int count = list.size();
 
-            Log.v("originalListSize", Integer.toString(count));
+//            Log.v("originalListSize", Integer.toString(count));
             final ArrayList<Bill> nlist = new ArrayList<Bill>(count);
 
             // check if sent refresh, or spinner/checkbox value

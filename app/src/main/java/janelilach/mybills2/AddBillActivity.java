@@ -18,6 +18,8 @@ public class AddBillActivity extends AppCompatActivity {
 
     private boolean paid;
     private boolean recurring;
+    private Intent toSend;
+    private Date oldPaidDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,8 +27,8 @@ public class AddBillActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_bill);
 
-        Intent i = getIntent();
-        Bundle receivedB = i.getBundleExtra("bill");
+        toSend = getIntent();
+        Bundle receivedB = toSend.getBundleExtra("bill");
         if (receivedB != null) {
             Bill oldBill = (Bill) receivedB.getSerializable("bill");
 
@@ -41,8 +43,10 @@ public class AddBillActivity extends AppCompatActivity {
 
             if (oldBill.paidDate != null) {
                 ((RadioButton) findViewById(R.id.add_bill_status_paid)).setChecked(true);
+                oldPaidDate = new Date(oldBill.paidDate.getTime());
             } else {
                 ((RadioButton) findViewById(R.id.add_bill_status_unpaid)).setChecked(true);
+                oldPaidDate = null;
             }
 
             if (oldBill.recurring) {
@@ -75,17 +79,27 @@ public class AddBillActivity extends AppCompatActivity {
         Date today = new Date();
 
         String date = ((EditText) findViewById(R.id.add_bill_date)).getText().toString();
-        Log.v("date", date);
+        Log.v("dateToday", date);
 
         try {
             dueDate = df.parse(date);
-            Log.v("due date cal", dueDate.toString());
+            Log.v("dateDue", dueDate.toString());
+
+            if (oldPaidDate != null) {
+                paid = true;
+            }
+
+//            Log.v("addBill", oldPaidDate.toString());
 
             // may need to fix the logic of setting paid dates here
             if (paid) {
                 color = "green";
-//                Log.v("bill color",color);
-                paidDate = new Date();
+                Log.v("bill color",color);
+                if (oldPaidDate == null) {
+                    paidDate = new Date();
+                } else {
+                    paidDate = oldPaidDate;
+                }
                 if (paidDate.after(dueDate)) { // case 1: editing bill status to paid
 
                     String paidDateString = df.format(today);
@@ -101,17 +115,17 @@ public class AddBillActivity extends AppCompatActivity {
                 }
             }
 
-//            Log.v("bill color 2",color);
+            Log.v("bill color 2",color);
 
-            Intent intent = new Intent();
+            toSend = new Intent();
             Bundle b = new Bundle();
             b.putSerializable("bill", new Bill(name, amount, dueDate, paidDate, type, recurring, color));
-            intent.putExtra("bill", b);
+            toSend.putExtra("bill", b);
 
 //            if (oldBill != null) {
 //                intent.putExtra("isEdit", true);
 //            }
-            setResult(RESULT_OK, intent);
+            setResult(RESULT_OK, toSend);
             finish();
         } catch (java.text.ParseException e) {
             String stackTrace = e.getStackTrace().toString();
@@ -122,6 +136,8 @@ public class AddBillActivity extends AppCompatActivity {
 
 
     public void onAddBillCancelClick(View view) {
+
+        setResult(RESULT_CANCELED, toSend);
         finish();
     }
 

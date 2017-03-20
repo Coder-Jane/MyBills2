@@ -23,6 +23,8 @@ public class MainActivity extends AppCompatActivity {
     private ListView listView;
     private BillArrayAdapter billAA;
 
+    private Bill oldBill;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
         billAA = new BillArrayAdapter(bills, this, this);
         listView.setAdapter(billAA);
         billAA.getFilter().filter("1,1,1");
+
 
 
         // set spinner listener
@@ -80,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
                     Log.v("DeleteBill",thisBill.toString());
                 }
                 // need to remove old bill in either case
+                oldBill = thisBill;
                 bills = billsIO.deleteBill(thisBill);
                 billAA.getFilter().filter("refresh");
             }
@@ -123,16 +127,13 @@ public class MainActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1) {
-            if (resultCode == RESULT_OK){
-//                boolean isEdit = data.getBooleanExtra("isEdit", false);
-//                Log.v("result of action", String.valueOf(isEdit));
-//                if (isEdit) {
-//
-//                }
+            if (resultCode == RESULT_OK || resultCode == RESULT_CANCELED) {
                 Bundle b = data.getBundleExtra("bill");
-                Bill newBill = (Bill) b.getSerializable("bill");
-                bills = billsIO.addBill(newBill);
-                billAA.getFilter().filter("refresh");
+                if (b != null) {
+                    Bill newBill = (Bill) b.getSerializable("bill");
+                    bills = billsIO.addBill(newBill);
+                    billAA.getFilter().filter("refresh");
+                }
             }
         }
     }

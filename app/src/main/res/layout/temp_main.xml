@@ -26,7 +26,7 @@
         android:layout_marginTop="30dp">
 
         <TextView
-            android:text="View my bills from the last"
+            android:text="View my bills from"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/textView2"
@@ -39,7 +39,7 @@
             android:id="@+id/spinner_dates" />
 
         <TextView
-            android:text="months:"
+            android:text="months ago:"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/textView3"
