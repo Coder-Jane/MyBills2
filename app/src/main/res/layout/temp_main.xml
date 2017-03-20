@@ -1,9 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="10dp"
     android:weightSum="1">
+
+
+    <android.support.v7.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/grey_light"
+        android:theme="?attr/actionBarTheme"
+        android:minHeight="?attr/actionBarSize"
+        android:id="@+id/toolbar" />
 
     <Button
         android:text="+ Add New Bill"
@@ -17,12 +27,14 @@
         android:paddingRight="10dp"
         android:textSize="18sp"
         android:background="@drawable/blue_button"
-        android:onClick="onAddBillClick" />
+        android:onClick="onAddBillClick"
+        android:layout_marginTop="10dp" />
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="10dp"
         android:layout_marginTop="30dp">
 
         <TextView
@@ -52,6 +64,7 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="10dp"
         android:layout_marginBottom="16dp"
         android:layout_below="@+id/ListView" >
 
@@ -93,6 +106,7 @@
     <ListView
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
+        android:layout_margin="10dp"
         android:id="@+id/listView"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"

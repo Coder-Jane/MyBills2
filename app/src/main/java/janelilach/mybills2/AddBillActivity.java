@@ -3,6 +3,7 @@ package janelilach.mybills2;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -28,6 +29,7 @@ public class AddBillActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_bill);
 
+        // populate spinner
         ArrayList<String> arrayList1 = new ArrayList<String>();
         arrayList1.add("Cable");
         arrayList1.add("Credit");
@@ -46,10 +48,17 @@ public class AddBillActivity extends AppCompatActivity {
         spinner.setAdapter(adapter);
         spinner.setVisibility(View.VISIBLE);
 
+
+        // set toolbar text
+        Toolbar actionBar = (Toolbar) findViewById(R.id.toolbar2);
+        setSupportActionBar(actionBar);
+        getSupportActionBar().setTitle("HOME > ADD BILL");
+
         toSend = getIntent();
         Bundle receivedB = toSend.getBundleExtra("bill");
 
         if (receivedB != null) {
+            getSupportActionBar().setTitle("HOME > EDIT BILL");
             Bill oldBill = (Bill) receivedB.getSerializable("bill");
 
             ((EditText) findViewById(R.id.add_bill_name)).setText(oldBill.name);
@@ -60,7 +69,7 @@ public class AddBillActivity extends AppCompatActivity {
             //ArrayAdapter adapter = (ArrayAdapter) spinner.getAdapter();
             spinner.setSelection(adapter.getPosition(oldBill.type));
 
-            SimpleDateFormat df = new SimpleDateFormat("MM-dd-yyyy");
+            SimpleDateFormat df = new SimpleDateFormat("MM/dd/yyyy");
             ((EditText) findViewById(R.id.add_bill_date)).setText(df.format((oldBill.dueDate)));
 
             if (oldBill.paidDate != null) {

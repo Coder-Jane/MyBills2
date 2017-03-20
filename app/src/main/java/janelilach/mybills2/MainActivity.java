@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -39,6 +40,12 @@ public class MainActivity extends AppCompatActivity {
         billAA = new BillArrayAdapter(bills, this, this);
         listView.setAdapter(billAA);
         billAA.getFilter().filter("1,1,1");
+
+
+        // set toolbar text
+        Toolbar actionBar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(actionBar);
+        getSupportActionBar().setTitle("HOME");
 
 
 
