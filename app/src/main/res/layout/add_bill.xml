@@ -85,6 +85,7 @@
             android:layout_height="91dp"
             android:calendarViewShown="false"
             android:datePickerMode="spinner"
+            android:textSize="25dp"
             android:padding="-10dp" />
 
     </LinearLayout>

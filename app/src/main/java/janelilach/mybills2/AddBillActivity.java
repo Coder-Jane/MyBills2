@@ -2,16 +2,22 @@ package janelilach.mybills2;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -29,6 +35,7 @@ public class AddBillActivity extends AppCompatActivity {
     private Intent toSend;
     private Date oldPaidDate;
     private Date dueDate = new Date();
+    final Context context = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -185,7 +192,21 @@ public class AddBillActivity extends AppCompatActivity {
     }
 
     public void warnInvalidBill() {
-        Toast.makeText(this, "TRYING TO ADD INVALID BILL", Toast.LENGTH_SHORT).show();
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.CustomDialog);
+        builder.setTitle("Invalid Form");
+        builder.setMessage("Please fill out all the fields in this form!");
+        builder.setPositiveButton("Got it!", null);
+
+        AlertDialog alert2 = builder.create();
+        alert2.show();
+
+        Button button0 = alert2.getButton(AlertDialog.BUTTON_POSITIVE);
+        button0.setBackground(context.getResources().getDrawable(R.drawable.red_dialog_button));
+        LinearLayout.LayoutParams positiveButtonLL = (LinearLayout.LayoutParams) button0.getLayoutParams();
+        positiveButtonLL.gravity = Gravity.CENTER;
+        positiveButtonLL.bottomMargin = 10;
+        positiveButtonLL.width = 850;
     }
 
     public void onRadioButtonClicked(View view) {
