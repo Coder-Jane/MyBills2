@@ -56,8 +56,8 @@
             android:textColor="?attr/editTextColor" />
 
         <EditText
-            android:hint="$"
             android:layout_width="188dp"
+            android:hint="$00.0"
             android:layout_height="wrap_content"
             android:id="@+id/add_bill_amount"
             android:background="@android:drawable/editbox_dropdown_light_frame"

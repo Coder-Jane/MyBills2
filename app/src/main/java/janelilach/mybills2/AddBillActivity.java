@@ -5,11 +5,15 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.Selection;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -20,6 +24,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
@@ -114,6 +119,55 @@ public class AddBillActivity extends AppCompatActivity {
             }
         });
 
+        // set amount field
+        // code borrowed from http://stackoverflow.com/questions/3013795/android-money-input-with-fixed-decimal
+        final EditText add_bill_amount =  ((EditText) findViewById(R.id.add_bill_amount));
+
+        add_bill_amount.setRawInputType(Configuration.KEYBOARD_12KEY);
+
+        add_bill_amount.addTextChangedListener(new TextWatcher(){
+
+
+            @Override
+            public void afterTextChanged(Editable arg0) {
+                // TODO Auto-generated method stub
+
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start,
+                                          int count, int after) {
+                // TODO Auto-generated method stub
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start,
+                                      int before, int count) {
+                if(!s.toString().matches("^\\$(\\d{1,3}(\\,\\d{3})*|(\\d+))(\\.\\d{2})?$"))
+                {
+                    String userInput= ""+s.toString().replaceAll("[^\\d]", "");
+                    StringBuilder cashAmountBuilder = new StringBuilder(userInput);
+
+                    while (cashAmountBuilder.length() > 3 && cashAmountBuilder.charAt(0) == '0') {
+                        cashAmountBuilder.deleteCharAt(0);
+                    }
+                    while (cashAmountBuilder.length() < 3) {
+                        cashAmountBuilder.insert(0, '0');
+                    }
+                    cashAmountBuilder.insert(cashAmountBuilder.length()-2, '.');
+                    cashAmountBuilder.insert(0, '$');
+
+                    add_bill_amount.setText(cashAmountBuilder.toString());
+
+                    add_bill_amount.setTextKeepState(cashAmountBuilder.toString());
+                    Selection.setSelection(add_bill_amount.getText(), cashAmountBuilder.toString().length());
+                }
+
+            }
+
+        });
+
     }
 
     public void onAddBillConfirmClick(View view) {
@@ -130,13 +184,8 @@ public class AddBillActivity extends AppCompatActivity {
         }
 
         // parse amount
-        String amountString = ((EditText) findViewById(R.id.add_bill_amount)).getText().toString();
-        String pattern = "^\\d*\\.\\d{2}$";
-        Pattern r = Pattern.compile(pattern);
-        Matcher m = r.matcher(amountString);
-        if (!m.matches()) {
-            invalid = true;
-        }
+        String amountString = ((EditText) findViewById(R.id.add_bill_amount)).getText().toString().substring(1);
+        Log.v("amount", amountString);
 
         Spinner spinner = (Spinner) findViewById(R.id.spinner_types);
 
