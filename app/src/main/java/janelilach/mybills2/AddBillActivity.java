@@ -185,7 +185,6 @@ public class AddBillActivity extends AppCompatActivity {
 
         // parse amount
         String amountString = ((EditText) findViewById(R.id.add_bill_amount)).getText().toString().substring(1);
-        Log.v("amount", amountString);
 
         Spinner spinner = (Spinner) findViewById(R.id.spinner_types);
 
